@@ -1,6 +1,6 @@
 {
   "name": "nace-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server exposing NACE Rev. 2.1 economic activity classification codes",
   "type": "module",
   "main": "dist/index.js",
@@ -31,5 +31,5 @@
     "eurostat"
   ],
   "license": "MIT",
-  "mcpName": "io.github.dejo90/nace-mcp"
+  "mcpName": "io.github.DeJo90/nace-mcp"
 }

@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.dejo90/nace-mcp",
+  "name": "io.github.DeJo90/nace-mcp",
   "description": "Browse, search and fuzzy-match NACE Rev. 2.1 economic activity classification codes.",
   "repository": {
     "url": "https://github.com/DeJo90/nace-mcp",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "nace-mcp",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "transport": {
         "type": "stdio"
       }
