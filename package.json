@@ -30,5 +30,6 @@
     "economic-activity",
     "eurostat"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "mcpName": "io.github.dejo90/nace-mcp"
 }

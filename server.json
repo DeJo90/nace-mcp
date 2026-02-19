@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.dejo90/nace-mcp",
+  "description": "MCP server exposing NACE Rev. 2.1 economic activity classification codes. Provides four tools for browsing, looking up, searching, and fuzzy-matching the full 1,047-entry NACE hierarchy.",
+  "repository": {
+    "url": "https://github.com/DeJo90/nace-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "nace-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
