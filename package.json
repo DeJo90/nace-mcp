@@ -1,19 +1,34 @@
 {
-  "name": "nace-codes",
-  "version": "1.0.1",
-  "author": "Jonas Parnow",
+  "name": "nace-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing NACE Rev. 2.1 economic activity classification codes",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "nace-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "data/"
+  ],
   "scripts": {
     "build": "tsc",
-    "dev": "netlify dev",
-    "deploy": "netlify deploy"
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "lodash": "^4.17.21"
+    "@modelcontextprotocol/sdk": "^1.6.0"
   },
   "devDependencies": {
-    "@netlify/functions": "^3.0.0",
-    "csv-parser": "^3.1.0",
+    "@types/node": "^22.0.0",
     "typescript": "^5.7.3"
-  }
+  },
+  "keywords": [
+    "mcp",
+    "nace",
+    "classification",
+    "economic-activity",
+    "eurostat"
+  ],
+  "license": "MIT"
 }
