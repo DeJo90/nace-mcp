@@ -30,10 +30,10 @@ Returns full details for a single NACE code.
 **Example output:**
 ```json
 {
-  "code": "25.11",
-  "label": "Manufacture of metal structures and parts of structures",
+  "code": "95.31",
+  "label": "Repair and maintenance of motor vehicles",
   "level": "class",
-  "parent": "25.1"
+  "parent": "95.3"
 }
 ```
 
@@ -50,15 +50,17 @@ Returns the direct children of a code (compact: code + label only). Omit `parent
 [
   { "code": "A", "label": "Agriculture, forestry and fishing" },
   { "code": "B", "label": "Mining and quarrying" },
+  { "code": "C", "label": "Manufacturing" },
   ...
 ]
 ```
 
-**Example — `nace_browse("25")`:**
+**Example — `nace_browse("J")`:**
 ```json
 [
-  { "code": "25.1", "label": "Manufacture of structural metal products" },
-  { "code": "25.2", "label": "Manufacture of tanks, reservoirs and containers of metal" },
+  { "code": "58", "label": "Publishing activities" },
+  { "code": "59", "label": "Motion picture, video and television programme production, sound recording and music publishing activities" },
+  { "code": "60", "label": "Programming, broadcasting, news agency and other content distribution activities" },
   ...
 ]
 ```
@@ -69,13 +71,15 @@ Returns the direct children of a code (compact: code + label only). Omit `parent
 
 Case-insensitive substring search across all activity labels. Returns up to 10 matches.
 
-**Input:** `query` — e.g. `"repair"`, `"software"`, `"fishing"`
+**Input:** `query` — e.g. `"software"`, `"fishing"`, `"consulting"`
 
-**Example — `nace_search("vehicle repair")`:**
+**Example — `nace_search("software")`:**
 ```json
 [
-  { "code": "45.20", "label": "Maintenance and repair of motor vehicles", "level": "class" },
-  { "code": "30.12", "label": "Building of pleasure and sporting boats", "level": "class" }
+  { "code": "58.1", "label": "Publishing of books, newspapers and other publishing activities, except software publishing", "level": "group" },
+  { "code": "58.19", "label": "Other publishing activities, except software publishing", "level": "class" },
+  { "code": "58.2", "label": "Software publishing", "level": "group" },
+  { "code": "58.29", "label": "Other software publishing", "level": "class" }
 ]
 ```
 
@@ -85,27 +89,145 @@ Case-insensitive substring search across all activity labels. Returns up to 10 m
 
 Fuzzy-matches a free-text description to NACE codes. Tokenizes the input, scores by matched terms, and returns the top 5 candidates with a brief explanation. Designed for AI agents doing classification.
 
-**Input:** `activity_description` — e.g. `"vehicle maintenance and repair workshop"`, `"software development consultancy"`
+**Input:** `activity_description` — free-text description of the economic activity
 
-**Example — `nace_suggest("vehicle maintenance and repair workshop")`:**
+**Example — `nace_suggest("computer programming software development consultancy")`:**
 ```json
 [
   {
-    "code": "45.20",
-    "label": "Maintenance and repair of motor vehicles",
-    "level": "class",
-    "reason": "Matched: \"vehicle\", \"maintenance\", \"repair\""
+    "code": "62",
+    "label": "Computer programming, consultancy and related activities",
+    "level": "division",
+    "reason": "Matched: \"computer\", \"programming\", \"consultancy\""
   },
   {
-    "code": "33.17",
-    "label": "Repair and maintenance of other transport equipment",
+    "code": "62.1",
+    "label": "Computer programming activities",
+    "level": "group",
+    "reason": "Matched: \"computer\", \"programming\""
+  },
+  {
+    "code": "62.10",
+    "label": "Computer programming activities",
     "level": "class",
-    "reason": "Matched: \"maintenance\", \"repair\""
-  }
+    "reason": "Matched: \"computer\", \"programming\""
+  },
+  ...
 ]
 ```
 
 > **Tip:** For non-English descriptions (e.g. German "KFZ Mechaniker"), rephrase in English before calling `nace_suggest`.
+
+---
+
+## Prompt Examples
+
+These examples show how an AI agent uses the tools in practice.
+
+---
+
+### "What NACE code applies to a car repair shop?"
+
+The agent calls `nace_suggest` with an English description:
+
+```
+nace_suggest("motor vehicle repair maintenance workshop")
+```
+
+```json
+[
+  {
+    "code": "95",
+    "label": "Repair and maintenance of computers, personal and household goods, and motor vehicles and motorcycles",
+    "level": "division",
+    "reason": "Matched: \"motor\", \"vehicle\", \"repair\", \"maintenance\""
+  },
+  {
+    "code": "95.3",
+    "label": "Repair and maintenance of motor vehicles and motorcycles",
+    "level": "group",
+    "reason": "Matched: \"motor\", \"vehicle\", \"repair\", \"maintenance\""
+  },
+  {
+    "code": "95.31",
+    "label": "Repair and maintenance of motor vehicles",
+    "level": "class",
+    "reason": "Matched: \"motor\", \"vehicle\", \"repair\", \"maintenance\""
+  }
+]
+```
+
+The agent then drills into the best match with `nace_get("95.31")` to confirm the parent chain:
+
+```json
+{
+  "code": "95.31",
+  "label": "Repair and maintenance of motor vehicles",
+  "level": "class",
+  "parent": "95.3"
+}
+```
+
+**Result:** `95.31` is the correct class-level code for a car repair shop.
+
+---
+
+### "What NACE code covers a bakery?"
+
+```
+nace_suggest("bakery bread pastry production")
+```
+
+```json
+[
+  {
+    "code": "10.71",
+    "label": "Manufacture of bread; manufacture of fresh pastry goods and cakes",
+    "level": "class",
+    "reason": "Matched: \"bread\", \"pastry\""
+  }
+]
+```
+
+**Result:** `10.71` — first candidate is an exact match, no further navigation needed.
+
+---
+
+### "Explore the information & communication sector"
+
+The agent browses the hierarchy top-down:
+
+```
+nace_browse("J")
+```
+
+```json
+[
+  { "code": "58", "label": "Publishing activities" },
+  { "code": "59", "label": "Motion picture, video and television programme production, sound recording and music publishing activities" },
+  { "code": "60", "label": "Programming, broadcasting, news agency and other content distribution activities" },
+  { "code": "61", "label": "Telecommunications" },
+  { "code": "62", "label": "Computer programming, consultancy and related activities" },
+  { "code": "63", "label": "Information service activities" }
+]
+```
+
+Then zooms into division 62:
+
+```
+nace_browse("62")
+```
+
+```json
+[
+  { "code": "62.1", "label": "Computer programming activities" },
+  { "code": "62.2", "label": "Computer consultancy and computer facilities management activities" },
+  { "code": "62.3", "label": "Computer facilities management activities" },
+  { "code": "62.9", "label": "Other information technology and computer service activities" }
+]
+```
+
+---
 
 ## Data
 
